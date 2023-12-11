@@ -1,6 +1,7 @@
 with open('input.txt') as f:
   lines = [[y for y in x] for x in f.read().split("\n")]
 
+# expand grid one step in all directions
 new_grid = [[{"char": ',', "dist": 0, "dirs": [], "orig": False}]]
 for _ in range(len(lines[0])):
   new_grid[0].append({"char": ',', "dist": 0, "dirs": [], "orig": False})
@@ -64,6 +65,7 @@ def mark(x, y):
         new_marked.append((mark[0], mark[1] + 1))
     marked = new_marked[:]
 
+# patch connectors into expansion
 points = []
 for x in range(len(new_grid)):
   for y in range(len(new_grid[x])):
@@ -77,6 +79,7 @@ for x in range(len(new_grid)):
 
 # print_maze()
 
+# mark the loop
 best = 1
 while len(points) > 0:
   new_points = []
@@ -109,6 +112,7 @@ while len(points) > 0:
   best += 1
   points = new_points[:]
 
+# if it wasn't in the loop, make it ground
 for x in range(len(new_grid)):
   for y in range(len(new_grid[x])):
     if len(new_grid[x][y]['dirs']) > 0 and new_grid[x][y]['dist'] == 0 and new_grid[x][y]['orig']:
@@ -118,11 +122,13 @@ for x in range(len(new_grid)):
       new_grid[x][y]['char'] = ','
       new_grid[x][y]['dirs'] = []
 
+# mark all the ground reachable from the outside
 for x in range(len(new_grid)):
   for y in range(len(new_grid[x])):
     if is_outside(x, y) and new_grid[x][y]['char'] in ['.', ',']:
       mark(x, y)
 
+# count what's left
 total = 0
 for x in range(len(new_grid)):
   for y in range(len(new_grid[x])):
